@@ -72,6 +72,7 @@ func (bn *BundlerClient) Init(ctx context.Context) error {
 			Codec: eth2api.JSONCodec{},
 		}
 	}
+	return nil
 }
 
 func (bn *BundlerClient) Shutdown() error {
@@ -148,11 +149,6 @@ func (all BundlerClients) Subnet(subnet string) BundlerClients {
 		return all
 	}
 	res := make(BundlerClients, 0)
-	for _, bn := range all {
-		if bn.Config.Subnet == subnet {
-			res = append(res, bn)
-		}
-	}
 	return res
 }
 
