@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/etherspot/eth-clients/clients/bundler"
 	"github.com/marioevz/eth-clients/clients/beacon"
 	"github.com/marioevz/eth-clients/clients/execution"
 	"github.com/marioevz/eth-clients/clients/utils"
@@ -17,6 +18,7 @@ import (
 // - Running Execution client
 // - Running Beacon client
 // - Running Validator client
+// - Running Bundler client
 // Contains a flag that marks a node that can be used to query
 // test verification information.
 type Node struct {
@@ -28,6 +30,7 @@ type Node struct {
 	ExecutionClient *execution.ExecutionClient
 	BeaconClient    *beacon.BeaconClient
 	ValidatorClient *validator.ValidatorClient
+	BundlerClient   *bundler.BundlerClient
 	// Whether this node can be used to query test verification information
 	Verification bool
 }
@@ -62,6 +65,13 @@ func (n *Node) Start() error {
 	} else {
 		n.Logf("No validator client started")
 	}
+	if n.BundlerClient != nil {
+		if err := n.BundlerClient.Start(); err != nil {
+			return err
+		}
+	} else {
+		n.Logf("No bundler client started")
+	}
 	return nil
 }
 
@@ -75,6 +85,9 @@ func (n *Node) Shutdown() error {
 	if err := n.ValidatorClient.Shutdown(); err != nil {
 		return err
 	}
+	if err := n.BundlerClient.Shutdown(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -85,6 +98,9 @@ func (n *Node) ClientNames() string {
 	}
 	if n.BeaconClient != nil {
 		name = fmt.Sprintf("%s/%s", name, n.BeaconClient.ClientName())
+	}
+	if n.BundlerClient != nil {
+		name = fmt.Sprintf("%s/%s", name, n.BundlerClient.ClientName())
 	}
 	return name
 }
