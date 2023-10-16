@@ -1,4 +1,4 @@
-module github.com/marioevz/eth-clients
+module github.com/etherspot/eth-clients
 
 go 1.20
 
